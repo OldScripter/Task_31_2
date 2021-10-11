@@ -1,6 +1,8 @@
 #include <iostream>
+#include "include/ListGraph.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    ListGraph lGraph;
+    lGraph.AddEdge(1,2);
     return 0;
 }
