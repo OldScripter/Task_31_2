@@ -1,18 +1,31 @@
 #include "../include/MatrixGraph.h"
 
+MatrixGraph::MatrixGraph()
+{
+    std::cout << "AdjacencyMatrix Graph is created.\n";
+    adjacencyMatrix = new AdjacencyMatrix();
+}
+
 MatrixGraph::MatrixGraph(IGraph *Other) : IGraph(Other)
 {
     auto otherMatrixGraph = dynamic_cast<MatrixGraph*>(Other);
     if (otherMatrixGraph)
     {
-        std::cout << "Matrix Graph is copied.\n";
+        std::cout << "\t\t - Matrix Graph is copied.\n";
         this->adjacencyMatrix = otherMatrixGraph->getAdjacencyMatrix();
     }
     else
     {
-        std::cout << "List Graph is copied (and converted to Matrix Graph).\n";
-        getMatrixFromList(Other);
+        std::cout << "\t\t - IGraph is copied (IGraph is casted to Matrix Graph).\n";
+        getMatrixFromGraph(Other);
     }
+}
+
+MatrixGraph::MatrixGraph(MatrixGraph *other)
+{
+    if (adjacencyMatrix == nullptr)
+        adjacencyMatrix = new AdjacencyMatrix();
+    *(this->adjacencyMatrix) = *(other->adjacencyMatrix);
 }
 
 MatrixGraph &MatrixGraph::operator=(IGraph &other)
@@ -26,8 +39,15 @@ MatrixGraph &MatrixGraph::operator=(IGraph &other)
     else
     {
         delete adjacencyMatrix;
-        getMatrixFromList(&other);
+        getMatrixFromGraph(&other);
     }
+    return *this;
+}
+
+MatrixGraph &MatrixGraph::operator=(MatrixGraph &other) {
+    if (adjacencyMatrix == nullptr)
+        adjacencyMatrix = new AdjacencyMatrix();
+    *(this->adjacencyMatrix) = *(other.adjacencyMatrix);
     return *this;
 }
 
@@ -114,13 +134,13 @@ AdjacencyMatrix *MatrixGraph::getAdjacencyMatrix()
     return adjacencyMatrix;
 }
 
-void MatrixGraph::getMatrixFromList(IGraph *listGraph) {
+void MatrixGraph::getMatrixFromGraph(IGraph *otherGraph) {
     if (adjacencyMatrix == nullptr)
     {
         adjacencyMatrix = new AdjacencyMatrix();
     }
     adjacencyMatrix->clearMatrix();
-    for (auto pair : *(listGraph->getEdges()))
+    for (auto pair : *(otherGraph->getEdges()))
     {
         AddEdge(pair.first, pair.second);
     }
@@ -142,11 +162,6 @@ std::vector<std::pair<int, int>>* MatrixGraph::getEdges() {
     return edgesVector;
 }
 
-MatrixGraph::MatrixGraph()
-{
-    std::cout << "AdjacencyMatrix Graph is created.\n";
-    adjacencyMatrix = new AdjacencyMatrix();
-}
 
 void MatrixGraph::printEdges() {
     for (auto pair : *(getEdges()))
@@ -159,13 +174,4 @@ void MatrixGraph::printEdges() {
 MatrixGraph::~MatrixGraph()
 {
     delete adjacencyMatrix;
-}
-
-MatrixGraph::MatrixGraph(MatrixGraph *other)
-{
-    if (adjacencyMatrix == nullptr)
-    {
-        adjacencyMatrix = new AdjacencyMatrix();
-    }
-    *(this->adjacencyMatrix) = *(other->adjacencyMatrix);
 }

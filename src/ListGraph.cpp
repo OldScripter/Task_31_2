@@ -1,23 +1,28 @@
 #include "../include/ListGraph.h"
 
+ListGraph::ListGraph()
+{
+    std::cout << "\t\t - List Graph is created.\n";
+}
+
 ListGraph::ListGraph(IGraph *other) : IGraph(other)
 {
     auto otherListGraph = dynamic_cast<ListGraph*>(other);
     if (otherListGraph)
     {
-        std::cout << "List Graph is copied.\n";
+        std::cout << "\t\t - IGraph is copied (IGraph casted to List Graph).\n";
         this->adjacencyList = *(otherListGraph->getAdjacencyList());
     }
     else
     {
         std::cout << "Matrix Graph is copied (and converted to List Graph).\n";
-        getListFromMatrix(other);
+        getListFromGraph(other);
     }
 }
 
 ListGraph::ListGraph(ListGraph *other)
 {
-    std::cout << "List Graph is copied.\n";
+    std::cout << "\t\t - List Graph is copied.\n";
     this->adjacencyList = *(other->getAdjacencyList());
 }
 
@@ -30,8 +35,14 @@ ListGraph &ListGraph::operator=(IGraph &other) {
     else
     {
         std::cout << "Matrix Graph is copied (and converted to List Graph).\n";
-        getListFromMatrix(&other);
+        getListFromGraph(&other);
     }
+    return *this;
+}
+
+ListGraph &ListGraph::operator=(ListGraph &other)
+{
+    this->adjacencyList = *(other.getAdjacencyList());
     return *this;
 }
 
@@ -162,10 +173,10 @@ void ListGraph::printEdges()
     }
 }
 
-void ListGraph::getListFromMatrix(IGraph *matrixGraph)
+void ListGraph::getListFromGraph(IGraph *otherGraph)
 {
     adjacencyList.clear();
-    auto vertices = matrixGraph->getEdges();
+    auto vertices = otherGraph->getEdges();
     for (auto pair : *vertices)
     {
         auto it = adjacencyList.find(pair.first);

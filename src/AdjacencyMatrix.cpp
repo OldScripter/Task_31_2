@@ -17,8 +17,14 @@ AdjacencyMatrix::AdjacencyMatrix(int dimensions)
 
 void AdjacencyMatrix::printMatrix()
 {
+    if (matrix.empty())
+    {
+        std::cout << "\t\t - No vertices.\n";
+        return;
+    }
     for (auto vector : matrix)
     {
+        std::cout << "\t\t - ";
         for (bool value : vector)
         {
             std::cout << value << " ";

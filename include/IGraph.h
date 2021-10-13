@@ -38,7 +38,14 @@ public:
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) const = 0; // Для конкретной вершины ме
 
     //Additional methods:
+    /**
+     * @metod Get all edges as vertex pairs 'from - to' and return them as pointer to allocated vector.
+     * @return [out] edges std::vector
+     */
     virtual std::vector<std::pair<int,int>>* getEdges() = 0;
+    /**
+     * @method Prints the all edges in format 'from - to' into console.
+     */
     virtual void printEdges() = 0;
 
 };
