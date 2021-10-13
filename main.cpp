@@ -68,7 +68,14 @@ int main() {
         std::cout << i << ' ';
     }
     std::cout << "\n";
-
+    std::cout << "\t - Vertex 4 can be reached from following vertices: ";
+    prevVertsTo4.clear();
+    mGraph.GetPrevVertices(4, prevVertsTo4);
+    for (int i : prevVertsTo4)
+    {
+        std::cout << i << ' ';
+    }
+    std::cout << "\n---------------\n";
 
     return 0;
 }

@@ -34,6 +34,7 @@ MatrixGraph &MatrixGraph::operator=(IGraph &other)
 void MatrixGraph::AddEdge(int from, int to)
 {
     int verticesCount = std::max(from, to);
+    if (adjacencyMatrix == nullptr) adjacencyMatrix = new AdjacencyMatrix();
     if (adjacencyMatrix->getVerticesCount() < verticesCount)
     {
         adjacencyMatrix->setVerticesCount(verticesCount);
@@ -44,11 +45,12 @@ void MatrixGraph::AddEdge(int from, int to)
 
 int MatrixGraph::VerticesCount() const
 {
+    if (adjacencyMatrix == nullptr) return 0;
     return adjacencyMatrix->getVerticesCount();
 }
 
 void MatrixGraph::GetNextVertices(int vertex, std::vector<int> &vertices) const {
-    //TODO MatrixGraph::GetNextVertices
+    if (adjacencyMatrix == nullptr) return;
     std::set<int> buffer {vertex};
     buffer.insert(vertex);
     bool newVertexDetected;
@@ -78,7 +80,33 @@ void MatrixGraph::GetNextVertices(int vertex, std::vector<int> &vertices) const 
 }
 
 void MatrixGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) const {
-    //TODO MatrixGraph::GetPrevVertices
+    if (adjacencyMatrix == nullptr) return;
+    std::set<int> buffer {vertex};
+    buffer.insert(vertex);
+    bool newVertexDetected;
+    do
+    {
+        newVertexDetected = false;
+        for (auto to : buffer)
+        {
+            for (int from = 1; from < adjacencyMatrix->getVerticesCount() + 1; ++from)
+            {
+                if (adjacencyMatrix->getEdge(from, to) and from != vertex)
+                {
+                    if (buffer.insert(from).second)
+                    {
+                        newVertexDetected = true;
+                    }
+                }
+            }
+        }
+    } while (newVertexDetected);
+
+    buffer.erase(vertex);
+    for (int i : buffer)
+    {
+        vertices.push_back(i);
+    }
 }
 
 AdjacencyMatrix *MatrixGraph::getAdjacencyMatrix()
@@ -87,16 +115,21 @@ AdjacencyMatrix *MatrixGraph::getAdjacencyMatrix()
 }
 
 void MatrixGraph::getMatrixFromList(IGraph *listGraph) {
+    if (adjacencyMatrix == nullptr)
+    {
+        adjacencyMatrix = new AdjacencyMatrix();
+    }
+    adjacencyMatrix->clearMatrix();
     for (auto pair : *(listGraph->getEdges()))
     {
-        adjacencyMatrix->clearMatrix();
         AddEdge(pair.first, pair.second);
     }
 }
 
 std::vector<std::pair<int, int>>* MatrixGraph::getEdges() {
     auto edgesVector = new std::vector<std::pair<int, int>>();
-    for (int i = 1; i < adjacencyMatrix->getVerticesCount()+1; ++i)
+    if (adjacencyMatrix == nullptr) return nullptr;
+    for (int i = 1; i < adjacencyMatrix->getVerticesCount() + 1; ++i)
     {
         for (int j = 1; j < adjacencyMatrix->getVerticesCount()+1; ++j)
         {
@@ -125,6 +158,14 @@ void MatrixGraph::printEdges() {
 
 MatrixGraph::~MatrixGraph()
 {
-    if (adjacencyMatrix != nullptr)
-        delete adjacencyMatrix;
+    delete adjacencyMatrix;
+}
+
+MatrixGraph::MatrixGraph(MatrixGraph *other)
+{
+    if (adjacencyMatrix == nullptr)
+    {
+        adjacencyMatrix = new AdjacencyMatrix();
+    }
+    *(this->adjacencyMatrix) = *(other->adjacencyMatrix);
 }

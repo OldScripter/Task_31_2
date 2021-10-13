@@ -10,22 +10,8 @@ ListGraph::ListGraph(IGraph *other) : IGraph(other)
     }
     else
     {
-        //TODO AdjacencyMatrix based graph copy to ListGraph
-        std::cout << "IGraph is copied to ListGraph.\n";
-        /*auto vertices = other->getEdges();
-        for (auto pair : *vertices)
-        {
-            auto it = adjacencyList.find(pair.first);
-            if (it == adjacencyList.end())
-            {
-                std::vector<int> v {pair.second};
-                adjacencyList.insert(std::make_pair(pair.first, v));
-            }
-            else
-            {
-                it->second.push_back(pair.second);
-            }
-        }*/
+        std::cout << "Matrix Graph is copied (and converted to List Graph).\n";
+        getListFromMatrix(other);
     }
 }
 
@@ -35,8 +21,17 @@ ListGraph::ListGraph(ListGraph *other)
     this->adjacencyList = *(other->getAdjacencyList());
 }
 
-ListGraph &ListGraph::operator=(const IGraph &other) {
-    //TODO Operator= for ListGraph and Igraph
+ListGraph &ListGraph::operator=(IGraph &other) {
+    auto otherListGraph = dynamic_cast<ListGraph*>(&other);
+    if (otherListGraph)
+    {
+        this->adjacencyList = *(otherListGraph->getAdjacencyList());
+    }
+    else
+    {
+        std::cout << "Matrix Graph is copied (and converted to List Graph).\n";
+        getListFromMatrix(&other);
+    }
     return *this;
 }
 
@@ -141,19 +136,19 @@ void ListGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) const
 }
 
 std::vector<std::pair<int, int>>* ListGraph::getEdges() {
-    std::vector<std::pair<int,int>>* edges = new std::vector<std::pair<int,int>>();
-    for (auto it = adjacencyList.begin(); it != adjacencyList.end(); ++it)
+    auto* edges = new std::vector<std::pair<int,int>>();
+    for (auto & it : adjacencyList)
     {
-        if (!it->second.empty())
+        if (!it.second.empty())
         {
-            for (int i : it->second)
+            for (int i : it.second)
             {
-                edges->push_back(std::make_pair(it->first, i));
+                edges->push_back(std::make_pair(it.first, i));
             }
         }
         else
         {
-            edges->push_back(std::make_pair(it->first, 0));
+            edges->push_back(std::make_pair(it.first, 0));
         }
     }
     return edges;
@@ -164,5 +159,24 @@ void ListGraph::printEdges()
     for (auto pair : *(getEdges()))
     {
         std::cout << "\t\t - " << pair.first << " : " << pair.second << "\n";
+    }
+}
+
+void ListGraph::getListFromMatrix(IGraph *matrixGraph)
+{
+    adjacencyList.clear();
+    auto vertices = matrixGraph->getEdges();
+    for (auto pair : *vertices)
+    {
+        auto it = adjacencyList.find(pair.first);
+        if (it == adjacencyList.end())
+        {
+            std::vector<int> v {pair.second};
+            adjacencyList.insert(std::make_pair(pair.first, v));
+        }
+        else
+        {
+            it->second.push_back(pair.second);
+        }
     }
 }

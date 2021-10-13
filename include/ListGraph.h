@@ -8,16 +8,14 @@ class ListGraph : public IGraph {
 public:
 
     ListGraph(){std::cout << "List Graph is created.\n";};
-    ListGraph& operator=(const IGraph& other);
+    ListGraph& operator=(IGraph& other);
     ListGraph(IGraph* other);
     ListGraph(ListGraph* other);
 
-    //Override:
     void AddEdge(int from, int to) override;
     int VerticesCount() const override;
     void GetNextVertices(int vertex, std::vector<int> &vertices) const override;
     void GetPrevVertices(int vertex, std::vector<int> &vertices) const override;
-
     /**
      * @metod Get the adjacency list.
      * @return [out] adjacencyList std::map
@@ -32,6 +30,8 @@ public:
      * @method Prints the all edges in format 'from - to' into console.
      */
     void printEdges() override;
+
+    void getListFromMatrix(IGraph* matrixGraph);
 
 private:
     std::map<int, std::vector<int>> adjacencyList;
